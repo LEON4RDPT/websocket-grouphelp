@@ -5,7 +5,7 @@ const cors = require("cors");
 const { handleConnection } = require("./controllers/chatController");
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 443;
 
 app.use(cors());
 
