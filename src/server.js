@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 8080;
 
 app.use(cors());
 
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`Servidor WebSocket rodando em http://localhost:${PORT}`);
 });
 
