@@ -5,7 +5,7 @@
   async function getFetch() {
     if (!fetch) {
       const fetchModule = await import("node-fetch");
-      fetch = fetchModule.default;
+      fetch = fetchModule.default;  
     }
     return fetch;
   }
@@ -15,8 +15,14 @@
     await getFetch();
 
     // Initialize Dropbox client with your access token and dynamically imported fetch
-    const dbx = new Dropbox({ accessToken: process.env.DROPBOX_ACCESS_TOKEN, fetch });
-    
+    const dbx = new Dropbox({
+      accessToken: process.env.DROPBOX_ACCESS_TOKEN,      // short-lived token
+      refreshToken: process.env.DROPBOX_REFRESH_TOKEN,    // refresh token
+      clientId: process.env.DROPBOX_CLIENT_ID,            // your Dropbox app key
+      clientSecret: process.env.DROPBOX_CLIENT_SECRET,    // your Dropbox app secret
+      fetch,
+    });
+        
     // Extract roomId and remove it from the message object
     const { roomId, ...messageWithoutRoom } = newMessage;
     // File name based on room ID; Dropbox paths need to start with a slash
