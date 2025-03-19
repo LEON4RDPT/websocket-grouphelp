@@ -10,3 +10,6 @@ logs/
 
 # Ignore build files if applicable
 dist/
+
+# Ignore temp
+tmp/messages/*

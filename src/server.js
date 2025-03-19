@@ -3,6 +3,7 @@ const express = require("express");
 const WebSocket = require("ws");
 const cors = require("cors");
 const { handleConnection } = require("./controllers/chatController");
+const { getMessages } = require("./controllers/messageController");
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -17,3 +18,4 @@ const wss = new WebSocket.Server({ server });
 
 // Handle WebSocket connections
 wss.on("connection", handleConnection);
+app.get("/messages/:roomId", getMessages);
