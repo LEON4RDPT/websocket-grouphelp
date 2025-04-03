@@ -1,6 +1,6 @@
 // Import the user service and message storage
 const userService = require("../services/userService");
-const { storeMessage } = require("../services/messageStorage");
+const { storeMessage } = require("../services/messageService");
 
 const handleConnection = (ws) => {
   let userId = null;
