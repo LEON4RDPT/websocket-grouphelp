@@ -8,8 +8,17 @@ const { getMessages } = require("./controllers/messageController");
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-app.use(cors());
+const allowedOrigin = process.env.CLIENT_URL;
 
+if (allowedOrigin) {
+  app.use(cors({
+    origin: allowedOrigin,
+  }));
+  console.log(`CORS restricted to: ${allowedOrigin}`);
+} else {
+  app.use(cors()); // allow all origins
+  console.warn("⚠️ No CLIENT_URL set. CORS is open to all origins.");
+}
 const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`Servidor WebSocket rodando em http://localhost:${PORT}`);
 });
