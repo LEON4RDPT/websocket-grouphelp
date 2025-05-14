@@ -10,6 +10,8 @@ const PORT = process.env.PORT || 8080;
 
 const allowedOrigin = process.env.CLIENT_URL;
 
+console.log("KEY \n" + process.env.KEY);
+
 if (allowedOrigin) {
   app.use(cors({
     origin: allowedOrigin,
