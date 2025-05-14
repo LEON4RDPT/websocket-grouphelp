@@ -6,11 +6,10 @@ const { decryptToken } = require("../utils/crypt");
 
 let serviceAccount;
 
-console.log(process.env.KEY)
 if (process.env.KEY) {
   try {
     const decoded = Buffer.from(process.env.KEY, "base64").toString("utf8");
-    console.log(decoded);
+    decoded = decoded.replace(/;/g, "").trim();
     serviceAccount = JSON.parse(decoded);
     console.log(serviceAccount);
   } catch (err) {
