@@ -1,8 +1,9 @@
 require("dotenv").config();
+const fs = require("fs");
 const admin = require("firebase-admin");
 const { Datastore } = require("@google-cloud/datastore");
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
-const { decryptToken } = require("../utils/crypt"); // ajusta o caminho se for diferente
+const serviceAccountPath = "./pass.json"; // Path to your service account JSON file
+const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, "utf8"));const { decryptToken } = require("../utils/crypt"); // ajusta o caminho se for diferente
 
 
 // ✅ Initialize Firebase Admin SDK

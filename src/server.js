@@ -10,7 +10,6 @@ const PORT = process.env.PORT || 8080;
 
 const allowedOrigin = process.env.CLIENT_URL;
 
-console.log(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
 if (allowedOrigin) {
   app.use(cors({
     origin: allowedOrigin,
