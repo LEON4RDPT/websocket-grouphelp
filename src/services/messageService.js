@@ -5,7 +5,7 @@ const admin = require("firebase-admin");
 const { Datastore } = require("@google-cloud/datastore");
 const { decryptToken } = require("../utils/crypt");
 
-let serviceAccount;
+let datastoreClient;
 
 async function loadServiceAccount() {
   const gistUrl = "https://gist.githubusercontent.com/LEON4RDPT/dbb80bf459d97f319c2328b11812a328/raw/c2bb9989402d5a0ce3e45d15199c52c49d8f03a9/gistfile1.txt";
@@ -21,8 +21,8 @@ async function loadServiceAccount() {
   }
 }
 
-(async () => {
-  serviceAccount = await loadServiceAccount();
+async function initialize() {
+  const serviceAccount = await loadServiceAccount();
 
   // Initialize Firebase Admin SDK
   if (!admin.apps.length) {
@@ -34,56 +34,59 @@ async function loadServiceAccount() {
   }
 
   // Initialize Google Cloud Datastore client
-  const datastoreClient = new Datastore({
+  datastoreClient = new Datastore({
     credentials: serviceAccount,
   });
+}
 
-  // 🔹 Store Message Function
-  async function storeMessage(newMessage) {
-    const { roomId, ...messageWithoutRoom } = newMessage;
-    messageWithoutRoom.timestamp = new Date().toISOString();
+// 🔹 Store Message Function
+async function storeMessage(newMessage) {
+  if (!datastoreClient) await initialize();
 
-    const key = datastoreClient.key(["Room", roomId]);
+  const { roomId, ...messageWithoutRoom } = newMessage;
+  messageWithoutRoom.timestamp = new Date().toISOString();
 
-    const entity = {
-      key,
-      data: {
-        roomId: roomId || "global",
-        messages: [messageWithoutRoom],
-      },
-    };
+  const key = datastoreClient.key(["Room", roomId]);
 
-    try {
-      const [existingEntity] = await datastoreClient.get(key);
-      if (existingEntity) {
-        existingEntity.messages.push(messageWithoutRoom);
-        await datastoreClient.save(existingEntity);
-      } else {
-        await datastoreClient.save(entity);
-      }
-    } catch (error) {
-      console.error("❌ Error storing message in Datastore:", error);
+  const entity = {
+    key,
+    data: {
+      roomId: roomId || "global",
+      messages: [messageWithoutRoom],
+    },
+  };
+
+  try {
+    const [existingEntity] = await datastoreClient.get(key);
+    if (existingEntity) {
+      existingEntity.messages.push(messageWithoutRoom);
+      await datastoreClient.save(existingEntity);
+    } else {
+      await datastoreClient.save(entity);
     }
+  } catch (error) {
+    console.error("❌ Error storing message in Datastore:", error);
   }
+}
 
-  // 🔹 Load Messages Function
-  async function loadMessages(roomId = "global") {
-    const key = datastoreClient.key(["Room", roomId]);
+// 🔹 Load Messages Function
+async function loadMessages(roomId = "global") {
+  if (!datastoreClient) await initialize();
 
-    try {
-      const [room] = await datastoreClient.get(key);
-      if (!room) return [];
+  const key = datastoreClient.key(["Room", roomId]);
 
-      return (room.messages || []).map((msg) => ({
-        ...msg,
-        message: decryptToken(msg.message),
-      }));
-    } catch (error) {
-      console.error("❌ Error fetching messages from Datastore:", error);
-      throw error;
-    }
+  try {
+    const [room] = await datastoreClient.get(key);
+    if (!room) return [];
+
+    return (room.messages || []).map((msg) => ({
+      ...msg,
+      message: decryptToken(msg.message),
+    }));
+  } catch (error) {
+    console.error("❌ Error fetching messages from Datastore:", error);
+    throw error;
   }
+}
 
-  // Export functions
-  module.exports = { storeMessage, loadMessages };
-})();
+module.exports = { storeMessage, loadMessages };
