@@ -3,6 +3,7 @@ const fs = require("fs");
 const admin = require("firebase-admin");
 const { Datastore } = require("@google-cloud/datastore");
 const { decryptToken } = require("../utils/crypt");
+const JSON5 = require('json5');
 
 let serviceAccount;
 
@@ -10,7 +11,7 @@ console.log(process.env.KEY);
 if (process.env.KEY) {
   try {
     const decoded = Buffer.from(process.env.KEY, "base64").toString("utf8");
-    serviceAccount = JSON.parse(decoded);
+    serviceAccount = JSON5.parse(decoded);
     console.log(serviceAccount);
   } catch (err) {
     console.error("❌ Failed to parse SERVICE_ACCOUNT_BASE64:", err);
