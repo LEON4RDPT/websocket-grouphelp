@@ -10,6 +10,7 @@ if (process.env.KEY) {
   try {
     let decoded = Buffer.from(process.env.KEY, "base64").toString("utf8");
     decoded = decoded.replace(/;/g, "").trim();
+    console.log(decoded);
     serviceAccount = JSON.parse(decoded);
     console.log(serviceAccount);
   } catch (err) {
