@@ -11,6 +11,7 @@ if (process.env.KEY) {
   try {
     const decoded = Buffer.from(process.env.KEY, "base64").toString("utf8");
     serviceAccount = JSON.parse(decoded);
+    console.log(serviceAccount);
   } catch (err) {
     console.error("❌ Failed to parse SERVICE_ACCOUNT_BASE64:", err);
     process.exit(1);
