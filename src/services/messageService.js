@@ -8,6 +8,8 @@ const { decryptToken } = require("../utils/crypt"); // ajusta o caminho se for d
 // ✅ Initialize Firebase Admin SDK
 if (!admin.apps.length) {
   // Parse the service account credentials from the environment variable
+  console.log('Service Account:', serviceAccount);
+
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     projectId: serviceAccount.project_id,
@@ -19,6 +21,7 @@ if (!admin.apps.length) {
 const datastoreClient = new Datastore({
   credentials: serviceAccount,
 });
+console.log('Datastore client initialized with projectId:', serviceAccount.project_id);
 
 
 // 🔹 Store Message Function (Datastore) with roomId as the key
