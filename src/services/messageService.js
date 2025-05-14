@@ -6,13 +6,13 @@ const { decryptToken } = require("../utils/crypt");
 
 let serviceAccount;
 
-console.log(process.env.KEY);
+console.log(process.env.KEY)
 if (process.env.KEY) {
   try {
     const decoded = Buffer.from(process.env.KEY, "base64").toString("utf8");
-    console.log("🔑 Decoded service account key:", decoded);
-    serviceAccount = decoded;
-    
+    console.log(decoded);
+    serviceAccount = JSON.parse(decoded);
+    console.log(serviceAccount);
   } catch (err) {
     console.error("❌ Failed to parse SERVICE_ACCOUNT_BASE64:", err);
     process.exit(1);
