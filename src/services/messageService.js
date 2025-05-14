@@ -3,8 +3,10 @@ const fs = require("fs");
 const admin = require("firebase-admin");
 const { Datastore } = require("@google-cloud/datastore");
 const serviceAccountPath = "./pass.json"; // Path to your service account JSON file
-const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, "utf8"));const { decryptToken } = require("../utils/crypt"); // ajusta o caminho se for diferente
+const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, "utf8"));
+const { decryptToken } = require("../utils/crypt"); // ajusta o caminho se for diferente
 
+console.log(fs.readFileSync(serviceAccountPath, "utf8"));
 
 // ✅ Initialize Firebase Admin SDK
 if (!admin.apps.length) {
