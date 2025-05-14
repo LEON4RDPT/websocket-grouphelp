@@ -2,17 +2,27 @@ require("dotenv").config();
 const fs = require("fs");
 const admin = require("firebase-admin");
 const { Datastore } = require("@google-cloud/datastore");
-const serviceAccountPath = "./pass.json"; // Path to your service account JSON file
-const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, "utf8"));
-const { decryptToken } = require("../utils/crypt"); // ajusta o caminho se for diferente
+const { decryptToken } = require("../utils/crypt");
 
-console.log(fs.readFileSync(serviceAccountPath, "utf8"));
+let serviceAccount;
 
-// ✅ Initialize Firebase Admin SDK
+console.log(process.env.KEY);
+if (process.env.KEY) {
+  try {
+    const decoded = Buffer.from(process.env.KEY, "base64").toString("utf8");
+    serviceAccount = JSON.parse(decoded);
+  } catch (err) {
+    console.error("❌ Failed to parse SERVICE_ACCOUNT_BASE64:", err);
+    process.exit(1);
+  }
+} else {
+  // fallback for local dev
+  const serviceAccountPath = "./pass.json";
+  serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, "utf8"));
+}
+
+// Firebase Admin SDK
 if (!admin.apps.length) {
-  // Parse the service account credentials from the environment variable
-  console.log('Service Account:', serviceAccount);
-
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     projectId: serviceAccount.project_id,
@@ -20,11 +30,10 @@ if (!admin.apps.length) {
   });
 }
 
-// ✅ Initialize Google Cloud Datastore client
+// Google Cloud Datastore
 const datastoreClient = new Datastore({
   credentials: serviceAccount,
 });
-console.log('Datastore client initialized with projectId:', serviceAccount.project_id);
 
 
 // 🔹 Store Message Function (Datastore) with roomId as the key
