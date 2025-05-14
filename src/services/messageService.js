@@ -19,7 +19,6 @@ if (!admin.apps.length) {
 const datastoreClient = new Datastore({
   credentials: serviceAccount,
 });
-console.log(datastoreClient);
 
 
 // 🔹 Store Message Function (Datastore) with roomId as the key
@@ -29,6 +28,7 @@ async function storeMessage(newMessage) {
 
   // Use roomId as the key for the Datastore entity
   const key = datastoreClient.key(["Room", roomId]);
+
 
   const entity = {
     key,
@@ -43,10 +43,8 @@ async function storeMessage(newMessage) {
     if (existingEntity) {
       existingEntity.messages.push(messageWithoutRoom);
       await datastoreClient.save(existingEntity);
-      console.log(`✅ Added message to existing room: ${roomId || 'global'}`);
     } else {
       await datastoreClient.save(entity);
-      console.log(`✅ Message stored successfully for room: ${roomId || 'global'}`);
     }
   } catch (error) {
     console.error('❌ Error storing message in Datastore:', error);
@@ -55,7 +53,6 @@ async function storeMessage(newMessage) {
 
 // 🔹 Retrieve Messages Function (Datastore) using roomId
 async function loadMessages(roomId = 'global') {
-  console.log(`🔍 Fetching messages for room: ${roomId}`);
 
   // Create the key for the Room entity
   const key = datastoreClient.key(['Room', roomId]);
@@ -65,7 +62,6 @@ async function loadMessages(roomId = 'global') {
     const [room] = await datastoreClient.get(key);
 
     if (!room) {
-      console.log('⚠️ No messages found for this room; returning an empty array.');
       return [];
     }
 
@@ -75,7 +71,6 @@ async function loadMessages(roomId = 'global') {
       message: decryptToken(msg.message)
     }));
 
-    console.log('✅ Retrieved decrypted messages:', messages);
     return messages;
 
   } catch (error) {

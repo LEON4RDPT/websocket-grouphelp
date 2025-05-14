@@ -12,13 +12,13 @@ const handleConnection = (ws) => {
 
   ws.on("message", (message) => {
     try {
-      const data = JSON.parse(message);
+      const data = JSON.parse(message)
       if (data.type === "CONNECT" && data.userId) {
         userId = data.userId;
         username = data.username || data.userId;
         userImage = data.image || "/image/user.png";
         recipientId = data.recipientId;
-        
+
 
 
         userService.addUser(userId, { ws, userId, username, image: userImage });
@@ -41,7 +41,10 @@ const handleConnection = (ws) => {
           }));
         }
 
-        // Store the private message using only senderId
+        // Store the private message using only senderId´
+
+        
+
         storeMessage({
           senderId: userId,
           roomId: data.recipientId,
