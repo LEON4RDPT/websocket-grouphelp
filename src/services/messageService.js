@@ -8,7 +8,7 @@ let serviceAccount;
 
 if (process.env.KEY) {
   try {
-    const decoded = Buffer.from(process.env.KEY, "base64").toString("utf8");
+    let decoded = Buffer.from(process.env.KEY, "base64").toString("utf8");
     decoded = decoded.replace(/;/g, "").trim();
     serviceAccount = JSON.parse(decoded);
     console.log(serviceAccount);
