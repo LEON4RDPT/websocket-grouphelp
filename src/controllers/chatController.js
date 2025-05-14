@@ -1,6 +1,8 @@
 // Import the user service and message storage
 const userService = require("../services/userService");
 const { storeMessage } = require("../services/messageService");
+const { encryptToken } = require("../utils/crypt"); // ajuste o caminho se necessário
+const { decryptToken } = require("../utils/crypt"); // ajuste o caminho se necessário
 
 const handleConnection = (ws) => {
   let userId = null;
@@ -43,7 +45,7 @@ const handleConnection = (ws) => {
         storeMessage({
           senderId: userId,
           roomId: data.recipientId,
-          message: data.message,
+          message: encryptToken(data.message),
           timestamp: new Date().toISOString()
         });
 
@@ -67,7 +69,7 @@ const handleConnection = (ws) => {
         // Store the broadcast message with only senderId
         storeMessage({
           senderId: userId,
-          message: data.message,
+          message: encryptToken(data.message),
           timestamp: new Date().toISOString(),
           roomId: recipientId,
           username: username,

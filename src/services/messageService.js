@@ -2,6 +2,8 @@ require("dotenv").config();
 const admin = require("firebase-admin");
 const { Datastore } = require("@google-cloud/datastore");
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+const { decryptToken } = require("../utils/crypt"); // ajusta o caminho se for diferente
+
 
 // ✅ Initialize Firebase Admin SDK
 if (!admin.apps.length) {
@@ -35,7 +37,7 @@ async function storeMessage(newMessage) {
       messages: [messageWithoutRoom],
     },
   };
-  
+
   try {
     const [existingEntity] = await datastoreClient.get(key);
     if (existingEntity) {
@@ -68,10 +70,14 @@ async function loadMessages(roomId = 'global') {
     }
 
     // Return the messages stored in the room
-    const messages = room.messages || [];
-    
-    console.log('✅ Retrieved messages:', messages);
+    const messages = (room.messages || []).map(msg => ({
+      ...msg,
+      message: decryptToken(msg.message)
+    }));
+
+    console.log('✅ Retrieved decrypted messages:', messages);
     return messages;
+
   } catch (error) {
     console.error('❌ Error fetching messages from Datastore:', error);
     throw error;
