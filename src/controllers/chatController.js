@@ -2,7 +2,6 @@
 const userService = require("../services/userService");
 const { storeMessage } = require("../services/messageService");
 const { encryptToken } = require("../utils/crypt"); // ajuste o caminho se necessário
-const { decryptToken } = require("../utils/crypt"); // ajuste o caminho se necessário
 
 const handleConnection = (ws) => {
   let userId = null;
@@ -18,8 +17,6 @@ const handleConnection = (ws) => {
         username = data.username || data.userId;
         userImage = data.image || "/image/user.png";
         recipientId = data.recipientId;
-        
-
 
         userService.addUser(userId, { ws, userId, username, image: userImage });
 
